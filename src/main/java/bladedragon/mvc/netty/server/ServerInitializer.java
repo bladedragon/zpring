@@ -1,5 +1,7 @@
 package bladedragon.mvc.netty.server;
 
+import bladedragon.mvc.netty.codec.HttpDecoder;
+import bladedragon.mvc.netty.codec.HttpEncoder;
 import bladedragon.mvc.netty.codec.PacketCodecHandler;
 import bladedragon.mvc.netty.handler.DispatchHandler;
 import bladedragon.mvc.netty.handler.IdleCheckHandler;
@@ -27,8 +29,10 @@ public class ServerInitializer extends ChannelInitializer<NioSocketChannel> {
                 .addLast("idleHandler",new IdleCheckHandler())
                 .addLast(new HttpRequestDecoder())
                 .addLast(new HttpObjectAggregator(65536))
+                .addLast(new HttpDecoder())
+//                .addLast(PacketCodecHandler.INSTANCE)
                 .addLast(new HttpResponseEncoder())
-                .addLast(PacketCodecHandler.INSTANCE)
+                .addLast(new HttpEncoder())
 
                 .addLast(new LoggingHandler(LogLevel.INFO))
                 .addLast(DispatchHandler.INSTANCE);

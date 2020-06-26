@@ -5,6 +5,8 @@ import bladedragon.mvc.netty.server.ServerInitializer;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.socket.nio.NioChannelOption;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 
 import java.net.InetSocketAddress;
 import java.util.Date;
@@ -20,7 +22,8 @@ public class WebServer extends BaseServer {
         init();
         serverBootstrap.group(bossGroup, workerGroup)
                 .channel(NioServerSocketChannel.class)
-                .option(NioChannelOption.TCP_NODELAY, true)
+                .handler(new LoggingHandler(LogLevel.INFO))
+                .childOption(NioChannelOption.TCP_NODELAY, true)
                 .option(NioChannelOption.SO_BACKLOG, 1024)
                 .childHandler(new ServerInitializer());
     }
