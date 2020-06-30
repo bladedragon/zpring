@@ -28,7 +28,7 @@ public class PacketCodecHandler extends MessageToMessageCodec<FullHttpRequest, S
     protected void encode(ChannelHandlerContext ctx, SelfResponse response, List<Object> out) throws Exception {
         log.error("运行到这里encode");
         ByteBuf body = (ByteBuf) response.getContent();
-        System.out.println("encode");
+        System.out.println(response.getContent());
         FullHttpResponse fullHttpResponse = new DefaultFullHttpResponse(
             response.getHttpVersion(),OK, Unpooled.wrappedBuffer(body));
         fullHttpResponse.headers().set(CONTENT_TYPE,response.getContentType())

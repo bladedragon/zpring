@@ -51,6 +51,7 @@ public class IocContext {
                 e.printStackTrace();
             }
         }
+        log.info("==>loadConfig success!");
     }
 
 
@@ -62,6 +63,9 @@ public class IocContext {
         }
         List<String> list = ClassUtil.getClassNamesByPath(basePackage);
         classNames = new ArrayList<>(list);
+        log.info("classNames: "+ classNames);
+        log.info("==> load doScanner success!");
+
     }
 
     public static void doInstance() {
@@ -125,6 +129,7 @@ public class IocContext {
             }
         }
         beanFactory.setIsLoadTrue();
+        log.info("==> load beanFactory success !");
     }
 
 

@@ -2,6 +2,8 @@ package bladedragon.mvc.netty.handler;
 
 
 import bladedragon.mvc.Dispatcher;
+import bladedragon.mvc.netty.codec.Request;
+import bladedragon.mvc.netty.codec.Response;
 import bladedragon.mvc.netty.codec.SelfRequest;
 import bladedragon.mvc.netty.codec.SelfResponse;
 import io.netty.channel.ChannelHandler;
@@ -20,9 +22,9 @@ public class DispatchHandler extends SimpleChannelInboundHandler<SelfRequest> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, SelfRequest selfRequest) throws Exception {
-        final SelfResponse response = SelfResponse.build(ctx,selfRequest);
+        final SelfResponse response = SelfResponse.build(ctx, selfRequest);
         Dispatcher dispatcher = new Dispatcher();
-        System.out.println("运行到这里");
+        System.out.println("运行到这里--Dispacher");
         dispatcher.doDispatcher(response,selfRequest);
         if(ctx.channel().isActive() && ctx.channel().isWritable()){
             ctx.writeAndFlush(response);

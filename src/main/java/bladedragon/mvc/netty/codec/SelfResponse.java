@@ -132,7 +132,12 @@ public class SelfResponse {
         return this;
     }
 
+    public SelfResponse setJsonContent(String s){
+        setContentType(request.isIE()?CONTENT_TYPE_JSON_IE : CONTENT_TYPE_JSON);
+        return setContent(s);
+    }
     public SelfResponse setJsonContent(Object o){
+        setContentType(request.isIE()?CONTENT_TYPE_JSON_IE: CONTENT_TYPE_JSON);
         return setContent(JsonUtil.toJson(o));
     }
 

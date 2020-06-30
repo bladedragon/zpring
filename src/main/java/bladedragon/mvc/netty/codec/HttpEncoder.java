@@ -15,11 +15,11 @@ import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 
 @Slf4j
-public class HttpEncoder extends MessageToMessageEncoder<SelfResponse> {
+public class HttpEncoder extends MessageToMessageEncoder<Response> {
 
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, SelfResponse responseBody, List<Object> out){
+    protected void encode(ChannelHandlerContext ctx, Response responseBody, List<Object> out){
         log.error("运行到encode");
         //获取服务端的字节流
         ByteBuf body = (ByteBuf) responseBody.getContent();

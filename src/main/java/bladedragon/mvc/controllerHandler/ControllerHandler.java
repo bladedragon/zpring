@@ -2,6 +2,7 @@ package bladedragon.mvc.controllerHandler;
 
 import bladedragon.core.BeanFactory;
 import bladedragon.core.annotation.Controller;
+import bladedragon.core.ioc.IocContext;
 import bladedragon.mvc.annotation.RequestMapping;
 import bladedragon.mvc.annotation.RequestMethod;
 import bladedragon.mvc.annotation.RequestParam;
@@ -24,8 +25,11 @@ public class ControllerHandler {
 
     private static BeanFactory beanFactory = BeanFactory.getInstance();
 
+
     static{
+        IocContext context = new IocContext();
         initRequestMapping();
+        log.info("==>pathControllerMap: "+ pathControllerMap);
     }
 
     public static void initRequestMapping(){
@@ -47,12 +51,15 @@ public class ControllerHandler {
                 baseUrl =requestMapping.value();
                 RequestMethod requestMethod = requestMapping.method();
                 httpMethod = requestMethod.toString();
+                log.info("==> httpMethod: "+httpMethod);
             }
             Method[] methods = clazz.getDeclaredMethods();
             for(Method method : methods){
+                log.info("==> methods iterator: "+method.getName());
                 if(method.isAnnotationPresent(RequestMapping.class)){
                     //添加Path
-                    RequestMapping requestMapping = clazz.getAnnotation(RequestMapping.class);
+                    RequestMapping requestMapping = method.getAnnotation(RequestMapping.class);
+                    log.info("==> RequestMapping: "+ requestMapping);
                     String methodUrl = requestMapping.value();
                     String path = (baseUrl+methodUrl).replaceAll("/+","/");
                     if(path.endsWith("/")){
@@ -61,6 +68,7 @@ public class ControllerHandler {
                     RequestMethod requestMethod = requestMapping.method();
                     httpMethod = requestMethod.toString();
                     pathInfo = new PathInfo(path,httpMethod);
+
                     if (pathControllerMap.containsKey(pathInfo)) {
                         log.error("url:{} 重复注册", pathInfo.getHttpPath());
                         throw new RuntimeException("url重复注册");
@@ -69,13 +77,28 @@ public class ControllerHandler {
                     //添加参数
 //                    Map<String,Class<?>> params = new HashMap<>();
                     List<String> params = new ArrayList<>();
+
                     for(Parameter methodParam  : method.getParameters()){
+
                         RequestParam requestParam = methodParam.getAnnotation(RequestParam.class);
-                        String paramName= methodParam.getType().getSimpleName();;
-                        if (null != requestParam) {
-                            paramName = requestParam.value();
-                        }
-                        params.add(paramName);
+                       if(requestParam != null){
+                           String paramName = requestParam.value();
+                           params.add(paramName);
+                           //得到的是各参数的参数类型
+                           log.info("addParamName: {}",paramName);
+                       }else{
+                           if(methodParam.getType().getSimpleName().equals("SelfRequest")){
+                              String paramName = "SelfRequest";
+                              params.add(paramName);
+                               //得到的是各参数的参数类型
+                               log.info("addParamName: {}",paramName);
+                           }else if("SelfResponse".equals(methodParam.getType().getSimpleName())){
+                               String paramName = "SelfResponse";
+                               params.add(paramName);
+                               //得到的是各参数的参数类型
+                               log.info("addParamName: {}",paramName);
+                           }
+                       }
                     }
 
 
@@ -95,7 +118,9 @@ public class ControllerHandler {
         }
 
     public ControllerInfo getController(String requestMethod, String requestPath) {
-        PathInfo pathInfo = new PathInfo(requestMethod, requestPath);
+        log.info(" ==> in Method getController , pathControllerMap: "+pathControllerMap);
+        log.info("==> requestMethod :" + requestMethod+", requestPath: "+requestPath);
+        PathInfo pathInfo = new PathInfo(requestPath, requestMethod);
         return pathControllerMap.get(pathInfo);
     }
 

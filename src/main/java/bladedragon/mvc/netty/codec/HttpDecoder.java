@@ -9,14 +9,14 @@ import java.util.List;
 
 @Slf4j
 public class HttpDecoder extends MessageToMessageDecoder<FullHttpRequest> {
-    @Override
+        @Override
     protected void decode(ChannelHandlerContext ctx, FullHttpRequest msg, List<Object> out) {
-        log.error("运行到这里");
+            System.out.println("运行到这里decoder");
         if (!msg.decoderResult().isSuccess()){
 //            sendError(ctx);
             return;
         }
-        final SelfRequest request = SelfRequest.build(ctx, msg);
+        final Request request = Request.build(ctx, msg);
 
         out.add(request);
     }
