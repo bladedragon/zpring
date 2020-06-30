@@ -1,6 +1,6 @@
 package bladedragon;
 
-import bladedragon.mvc.WebServer;
+import bladedragon.mvc.netty.server.WebServer;
 
 public class WebServerApplication {
 

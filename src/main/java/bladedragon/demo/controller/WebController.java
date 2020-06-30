@@ -2,14 +2,20 @@ package bladedragon.demo.controller;
 
 import bladedragon.core.annotation.Autowired;
 import bladedragon.core.annotation.Controller;
+import bladedragon.core.annotation.RestController;
+import bladedragon.demo.model.Person;
 import bladedragon.demo.service.WebService;
+import bladedragon.mvc.annotation.PostMapping;
 import bladedragon.mvc.annotation.RequestMapping;
 import bladedragon.mvc.annotation.RequestMethod;
 import bladedragon.mvc.annotation.RequestParam;
 import bladedragon.mvc.netty.codec.SelfResponse;
 import lombok.extern.slf4j.Slf4j;
 
-@Controller
+import java.util.ArrayList;
+import java.util.List;
+
+@RestController
 @Slf4j
 @RequestMapping("/demo")
 public class WebController {
@@ -24,10 +30,14 @@ public class WebController {
         response.setJsonContent("{\"info\":\""+name+"\"}");
     }
 
-    @RequestMapping(value="/add",method = RequestMethod.POST)
+    @PostMapping(value="/add")
     public void addHello(SelfResponse response){
         log.info("addHellow");
-        response.setJsonContent("{\"info\":\"success\"}");
+        String[] nickname = new String[]{"bladedragon","clement","dhdj"};
+
+        Person person = new Person("zzz",nickname,18);
+//        response.setJsonContent("{\"info\":\"success\"}");
+        response.setJsonContent(person);
     }
 
 

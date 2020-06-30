@@ -2,16 +2,12 @@ package bladedragon.mvc.netty.handler;
 
 
 import bladedragon.mvc.Dispatcher;
-import bladedragon.mvc.netty.codec.Request;
-import bladedragon.mvc.netty.codec.Response;
 import bladedragon.mvc.netty.codec.SelfRequest;
 import bladedragon.mvc.netty.codec.SelfResponse;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
-
-import javax.swing.*;
 
 @Slf4j
 @ChannelHandler.Sharable

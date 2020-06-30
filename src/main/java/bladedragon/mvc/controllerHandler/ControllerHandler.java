@@ -2,6 +2,7 @@ package bladedragon.mvc.controllerHandler;
 
 import bladedragon.core.BeanFactory;
 import bladedragon.core.annotation.Controller;
+import bladedragon.core.annotation.RestController;
 import bladedragon.core.ioc.IocContext;
 import bladedragon.mvc.annotation.RequestMapping;
 import bladedragon.mvc.annotation.RequestMethod;
@@ -9,6 +10,7 @@ import bladedragon.mvc.annotation.RequestParam;
 import bladedragon.mvc.netty.codec.SelfRequest;
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
@@ -41,7 +43,7 @@ public class ControllerHandler {
             Class<?> clazz = bean.getClass();
             PathInfo pathInfo;
             ControllerInfo controllerInfo;
-            if(!clazz.isAnnotationPresent(Controller.class)){
+            if(!clazz.isAnnotationPresent(Controller.class) && !clazz.isAnnotationPresent(RestController.class)){
                 continue;
             }
             String baseUrl = "";

@@ -29,6 +29,7 @@ public class Dispatcher {
 
         if(null == controllerInfo){
             response.sendError(HttpResponseStatus.NOT_FOUND,"404 No Found");
+            return;
         }
         Map<String,Object> params = request.getParams();
         log.info("Request传入的参数是 ：{} -- 传入的controllerInfo是：{}",params.keySet(),controllerInfo == null ? controllerInfo : controllerInfo.toString() );
@@ -59,7 +60,6 @@ public class Dispatcher {
             log.error("方法调用失败");
             e.printStackTrace();
         }
-
     }
 
 

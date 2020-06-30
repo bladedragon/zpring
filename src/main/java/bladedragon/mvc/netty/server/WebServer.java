@@ -1,4 +1,4 @@
-package bladedragon.mvc;
+package bladedragon.mvc.netty.server;
 
 import bladedragon.mvc.netty.server.BaseServer;
 import bladedragon.mvc.netty.server.ServerInitializer;
