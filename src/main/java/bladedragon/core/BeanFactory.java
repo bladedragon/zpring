@@ -14,6 +14,7 @@ import java.lang.annotation.Annotation;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -29,14 +30,14 @@ public class BeanFactory {
     }
 
     public Object getBean(Class<?> clz){
-        try {
-            return clz.newInstance();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return null;
+            String beanName = clz.getSimpleName();
+            Object instance = container.get(beanName);
+            if(null == instance){
+                log.info("beanName :"+StrUtil.lowerFirstCase(beanName));
+                return container.get(StrUtil.lowerFirstCase(beanName));
+            }
+            log.info("beanName: "+ beanName);
+            return instance;
     }
     public Object getBean(String beanName){
         if(StrUtil.isBlank(beanName)){
@@ -77,16 +78,18 @@ public class BeanFactory {
     }
 
     public Set<Class<?>> getClassesByAnnotation(Class<? extends Annotation> annotation){
-        Set<String> nameSet = container.keySet();
+
         Set<Class<?>> classSet = new HashSet<>();
         try {
-            for (String name : nameSet) {
-                classSet.add(Class.forName(name));
+            for (Object instance : container.values()) {
+                classSet.add(instance.getClass());
             }
-        }catch (ClassNotFoundException e){
+        }catch (Exception e){
             log.error("some names cannot map tp class");
         }
-        return classSet;
+        return classSet.stream()
+                .filter(clz->clz.isAnnotationPresent(annotation))
+                .collect(Collectors.toSet());
 
     }
 
@@ -130,18 +133,17 @@ public class BeanFactory {
         return returnClasses;
     }
 
+    //TODO: forName用法错误
     public Set<Class<?>> getClasses(){
         Set<Class<?>> classSet = new HashSet<>();
-        for(String name: container.keySet()){
-            try {
-                Class clz = Class.forName(name);
+        for(Object instance: container.values()){
+
+                Class clz = instance.getClass();
                 if(null != clz){
                     classSet.add(clz);
                 }
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
         }
         return classSet;
     }
+
 }

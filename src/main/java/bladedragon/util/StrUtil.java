@@ -22,6 +22,14 @@ public class StrUtil {
             return String.valueOf(chars);
     }
 
+    public static String upFirstCase(String str){
+        char[] chars = str.toCharArray();
+        if(chars[0] >=97 && chars[0] <= 122){
+            chars[0] -= 32;
+        }
+        return String.valueOf(chars);
+    }
+
 
     public static String headerFormat(String contentType,String charset){
         return contentType+";charset="+charset;

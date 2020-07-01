@@ -79,6 +79,7 @@ public class IocContext {
                 Class<?> clazz = ClassUtil.loadClass(name);
                 for(Class<? extends  Annotation> annotation : BEAN_ANNOTATIONS){
                     //TODO:目前有bug，只要有注解就可以加载bean
+                    //Bug：为什么要注入首字母为小写的bean？导致实例化的时候经常出问题
                     if(clazz.isAnnotationPresent(annotation)){
 
                         if(annotation == Service.class){

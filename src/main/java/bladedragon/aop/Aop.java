@@ -5,6 +5,7 @@ import bladedragon.aop.advice.Order;
 import bladedragon.aop.annotation.Aspect;
 import bladedragon.core.BeanFactory;
 import bladedragon.core.ioc.IocContext;
+import bladedragon.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -20,45 +21,59 @@ public class Aop {
     public Aop(){
         beanFactory = BeanFactory.getInstance();
     }
+//
+//    public void doAop(){
+//        System.out.println("start do aop");
+//        //test
+//        Set<Class<?>> classSet = beanFactory.getClassesBySuperClass(Advice.class);
+//
+//        Set<String> classNameSet = new HashSet<>();
+//        for(Class<?> clz : classSet){
+//            classNameSet.add(clz.getSimpleName());
+//        }
+//        log.info("classNameSet: "+classNameSet);
+//
+//        beanFactory.getClassesBySuperClass(Advice.class)
+//                .stream()
+//                .filter(clz->clz.isAnnotationPresent(Aspect.class))
+//                .map(this::createProxyAdvisor)
+//                .forEach(clz->{
+//                    System.out.println("aop foreach"+clz.getSimpleName());
+//                    //TODO:注意要修改aop的名字
+//                    final Advice advice = (Advice) beanFactory.getBean(clz);
+//                    Aspect aspect = clz.getAnnotation(Aspect.class);
+//                    beanFactory.getClassesByAnnotation(aspect.target())
+//                            .stream()
+//                            .filter(target -> !Advice.class.isAssignableFrom(target))
+//                            .filter(target -> !target.isAnnotationPresent(Aspect.class))
+//                            .forEach(target -> {
+//                                ProxyAdvicer advicer = new ProxyAdvicer(advice);
+//                                List<ProxyAdvicer> advicerList = new ArrayList<>();
+//                                advicerList.add(advicer);
+//                                Object proxyBean = ProxyCreator.createProxy(target,advicerList);
+//                                beanFactory.addBean(target.getSimpleName(),proxyBean);
+//                                log.info("aop add bean: "+ target.getSimpleName());
+//                            });
+//
+//                });
+//    }
 
     public void doAop(){
-        System.out.println("start do aop");
-        //test
-        Set<Class<?>> classSet = beanFactory.getClassesBySuperClass(Advice.class);
-
-        Set<String> classNameSet = new HashSet<>();
-        for(Class<?> clz : classSet){
-            classNameSet.add(clz.getSimpleName());
-        }
-        log.info("classNameSet: "+classNameSet);
-
         beanFactory.getClassesBySuperClass(Advice.class)
                 .stream()
-                .filter(clz->clz.isAnnotationPresent(Aspect.class))
-                .forEach(clz->{
-                    System.out.println("aop foreach"+clz.getSimpleName());
-                    //TOOD: 注意要修改aop的名字
-                    final Advice advice = (Advice) beanFactory.getBean(clz);
-                    Aspect aspect = clz.getAnnotation(Aspect.class);
-                    beanFactory.getClassesByAnnotation(aspect.target())
-                            .stream()
-                            .filter(target -> !Advice.class.isAssignableFrom(target))
-                            .filter(target -> !target.isAnnotationPresent(Aspect.class))
-                            .forEach(target -> {
-                                ProxyAdvicer advicer = new ProxyAdvicer(advice);
-                                List<ProxyAdvicer> advicerList = new ArrayList<>();
-                                advicerList.add(advicer);
-                                Object proxyBean = ProxyCreator.createProxy(target,advicerList);
-                                beanFactory.addBean(target.getSimpleName(),proxyBean);
-                                log.info("aop add bean: "+ target.getSimpleName());
-                            });
-
-                });
+                .filter(clz -> clz.isAnnotationPresent(Aspect.class))
+                .map(this::createProxyAdvisor)
+                .forEach(proxyAdvisor -> beanFactory.getClasses()
+                        .stream()
+                        .filter(target -> !Advice.class.isAssignableFrom(target))
+                        .filter(target -> !target.isAnnotationPresent(Aspect.class))
+                        .forEach(target -> {
+                            if (proxyAdvisor.getPointcut().matches(target)) {
+                                Object proxyBean = ProxyCreator.createProxy(target, proxyAdvisor);
+                                beanFactory.addBean(StrUtil.lowerFirstCase(target.getSimpleName()), proxyBean);
+                            }
+                        }));
     }
-
-//    private List<ProxyAdvicer> createMatchProxies(List<ProxyAdvicer> proxyList, Class<?> clz) {
-//
-//    }
 
     private ProxyAdvicer createProxyAdvisor(Class<?> clz) {
         int order = 0;

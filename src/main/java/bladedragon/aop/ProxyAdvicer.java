@@ -19,11 +19,18 @@ import java.lang.reflect.Method;
 public class ProxyAdvicer {
     private Advice advice;
 
+    private ProxyPointcut pointcut;
+
+
     public ProxyAdvicer(Advice advice, ProxyPointcut proxyPointcut, int order) {
 
     }
 
     public Object doProxy(Object target, Class<?> targetClass, Method method, Object[] args, MethodProxy proxy) throws Throwable {
+        if (!pointcut.matches(method)) {
+            return proxy.invokeSuper(target, args);
+        }
+
         Object result =  null;
         if(advice instanceof MethodBeforeAdvice){
             ((MethodBeforeAdvice) advice).before(targetClass,method,args);
