@@ -1,5 +1,6 @@
 package bladedragon.core.ioc;
 
+import bladedragon.aop.annotation.Aspect;
 import bladedragon.core.BeanFactory;
 import bladedragon.core.annotation.*;
 import bladedragon.util.ClassUtil;
@@ -23,14 +24,14 @@ public class IocContext {
     private static Properties config = new Properties();
     private static List<String> classNames = new ArrayList<>();
     private static final List<Class<? extends Annotation>> BEAN_ANNOTATIONS
-            = Arrays.asList(Component.class, Controller.class, Repository.class, Service.class);
+            = Arrays.asList(Component.class, Controller.class, Repository.class, Service.class, Aspect.class);
 
 
     static {
         loadConfig("/application.properties");
         doScanner(config.getProperty("scanPackage"));
         doInstance();
-        doAutowired();
+
     }
 
 //    public IocContext() {
@@ -77,6 +78,7 @@ public class IocContext {
             try {
                 Class<?> clazz = ClassUtil.loadClass(name);
                 for(Class<? extends  Annotation> annotation : BEAN_ANNOTATIONS){
+                    //TODO:目前有bug，只要有注解就可以加载bean
                     if(clazz.isAnnotationPresent(annotation)){
 
                         if(annotation == Service.class){
@@ -119,6 +121,7 @@ public class IocContext {
                         }else{
                             String beanName = StrUtil.lowerFirstCase(clazz.getSimpleName());
                             Object instance = clazz.newInstance();
+                            System.out.println("beanName:"+beanName);
                             beanFactory.addBean(beanName,instance);
                         }
 

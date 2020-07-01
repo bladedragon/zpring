@@ -28,6 +28,16 @@ public class BeanFactory {
         return ContainerHolder.HOLDER.instance;
     }
 
+    public Object getBean(Class<?> clz){
+        try {
+            return clz.newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
     public Object getBean(String beanName){
         if(StrUtil.isBlank(beanName)){
            throw new RuntimeException("beanName is null");
@@ -93,11 +103,45 @@ public class BeanFactory {
     public boolean isEmpty(){
         return container.isEmpty();
     }
+
+
+
     private enum ContainerHolder{
         HOLDER;
         private BeanFactory instance;
         ContainerHolder(){
             instance = new BeanFactory();
         }
+    }
+
+    //---------和Aop相关
+    public Set<Class<?>> getClassesBySuperClass(Class<?> interfaceClz){
+        Set<String> clzNames = container.keySet();
+        log.info("clzNames: "+clzNames);
+        Set<Class<?>> returnClasses = new HashSet<>();
+
+            for(String name: clzNames) {
+                Class<?> clz = container.get(name).getClass();
+                if (interfaceClz.isAssignableFrom(clz) && !clz.equals(interfaceClz)) {
+                    returnClasses.add(clz);
+                }
+            }
+
+        return returnClasses;
+    }
+
+    public Set<Class<?>> getClasses(){
+        Set<Class<?>> classSet = new HashSet<>();
+        for(String name: container.keySet()){
+            try {
+                Class clz = Class.forName(name);
+                if(null != clz){
+                    classSet.add(clz);
+                }
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        return classSet;
     }
 }

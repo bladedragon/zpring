@@ -30,6 +30,7 @@ public class ControllerHandler {
 
     static{
         IocContext context = new IocContext();
+        IocContext.doAutowired();
         initRequestMapping();
         log.info("==>pathControllerMap: "+ pathControllerMap);
     }
